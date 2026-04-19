@@ -1,5 +1,3 @@
-# TODO: Add the rest of these schemas in once they are defined
-
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -11,8 +9,7 @@ from app.schemas.user import (
 
 from app.schemas.token import (
     Token,
-    # TokenData,
-    # TokenResponse,
+    TokenResponse,
 )
 
 from app.schemas.calculation import (
@@ -32,8 +29,7 @@ __all__ = [
     'UserUpdate',
     'PasswordUpdate',
     'Token',
-    # 'TokenData',
-    # 'TokenResponse',
+    'TokenResponse',
     'CalculationType',
     'CalculationBase',
     'CalculationCreate',
