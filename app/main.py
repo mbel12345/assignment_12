@@ -118,7 +118,7 @@ def login_json(user_login: UserLogin, db: Session = Depends(get_db)):
     )
 
 @app.post(
-    '/users/token',
+    '/auth/token',
     tags=['auth'],
 )
 def login_form(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
