@@ -33,6 +33,7 @@ pip install -r requirements.txt
 Note: This must be already running for all local testing
 In WSL/VS Code Terminal:
 ```bash
+docker compose down -v
 docker compose up --build
 ```
 
