@@ -391,7 +391,7 @@ def test_login_form():
     reg_response = client.post('/users/register', json=user_data)
     assert reg_response.status_code == 201, f'User registration failed: {reg_response.text}'
 
-    response = client.post('/auth/token', data={
+    response = client.post('/users/token', data={
         'username': user_data['username'],
         'password': user_data['password'],
     })
@@ -404,7 +404,7 @@ def test_login_form_no_match():
     # Test login_form for failure
 
     with patch('app.main.User.authenticate', return_value=None):
-        response = client.post('/auth/token', data={'username': 'abcdefg', 'password': 'securePass123!'})
+        response = client.post('/users/token', data={'username': 'abcdefg', 'password': 'securePass123!'})
         assert response.status_code == 401
 
 def test_get_calculation_value_error():
