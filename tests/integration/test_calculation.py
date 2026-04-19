@@ -190,7 +190,7 @@ def test_unimplemented_get_result():
     with pytest.raises(NotImplementedError, match=''):
         calc.get_result()
 
-def test_repr():
+def test_calculation_repr():
 
     # Test __repr__ for the Calculation class
 

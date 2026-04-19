@@ -1,18 +1,21 @@
 import logging
 import pytest
 
+from contextlib import contextmanager
+from faker import Faker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from typing import Generator
+
 from app.core.config import settings
 from app.database import get_engine
-'''
-TODO: I was trying to fix a pytest error for the models and thought I had to initialize DB, but I actually don't.
-Re-add this when DB/other appropriate tests are added.
-'''
-'''
+from app.database import get_sessionmaker
 from app.database.database_init import drop_db
 from app.database.database_init import init_db
-'''
+from app.models.user import User
 
 test_engine = get_engine(database_url=settings.DATABASE_URL)
+TestingSessionLocal = get_sessionmaker(engine=test_engine)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,13 +24,37 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-test_engine = get_engine(database_url=settings.DATABASE_URL)
+fake = Faker()
+Faker.seed(12345)
 
-'''
-TODO: I was trying to fix a pytest error for the models and thought I had to initialize DB, but I actually don't.
-Add this fixture when DB/other appropriate tests are added
-'''
-# @pytest.fixture(scope='session', autouse=True)
+test_engine = get_engine(database_url=settings.DATABASE_URL)
+TestingSessionLocal = get_sessionmaker(engine=test_engine)
+
+def create_fake_user() -> dict[str, str]:
+
+    # Generate a dictionary of fake user data for testing
+
+    return {
+        'first_name': fake.first_name(),
+        'last_name': fake.last_name(),
+        'email': fake.unique.email(),
+        'username': fake.unique.user_name(),
+        'password': fake.password(length=12),
+    }
+@contextmanager
+def managed_db_session():
+
+    # Context manager for safe database session handling
+    session = TestingSessionLocal()
+    try:
+        yield session
+    except SQLAlchemyError as e:
+        logger.error(f'Database error: {str(e)}')
+        raise
+    finally:
+        session.close()
+
+@pytest.fixture(scope='session', autouse=True)
 def setup_test_database(request):
 
     # Set up the test database before the session starts
@@ -46,6 +73,52 @@ def setup_test_database(request):
     if not request.config.getoption('--preserve-db'):
         logger.info('Dropping test database tables...')
         drop_db(test_engine)
+
+@pytest.fixture
+def db_session() -> Generator[Session, None, None]:
+
+    # Provide a test-scoped database session
+
+    session = TestingSessionLocal()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+@pytest.fixture
+def fake_user_data() -> dict[str, str]:
+
+    # Provide fake user data
+    return create_fake_user()
+
+@pytest.fixture
+def test_user(db_session: Session) -> User:
+
+    # Create and return a single test user
+
+    user_data = create_fake_user()
+    user = User(**user_data)
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    logger.info(f'Created test user ID: {user.id}')
+    return user
+
+@pytest.fixture
+def seed_users(db_session: Session, request) -> list[User]:
+
+    # Seed mlutiple test users in the database
+
+    num_users = getattr(request, 'param', 5)
+    users = [User(**create_fake_user()) for _ in range(num_users)]
+    db_session.add_all(users)
+    db_session.commit()
+    logger.info(f'Seeded /{len(users)} users.')
+    return users
 
 def pytest_addoption(parser):
 
