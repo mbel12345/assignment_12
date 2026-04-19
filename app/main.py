@@ -63,7 +63,7 @@ def read_health():
     return {'status': 'ok'}
 
 @app.post(
-    '/auth/register',
+    '/users/register',
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
     tags=['auth'],
@@ -81,7 +81,7 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
     # Adding try-catch blocks is not possible since validation is done ahead of time in pydantic
 
 @app.post(
-    '/auth/login',
+    '/users/login',
     response_model=TokenResponse,
     tags=['auth'],
 )

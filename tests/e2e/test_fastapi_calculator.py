@@ -29,14 +29,14 @@ def register_and_login(user_data: dict) -> dict:
 
     # Registers a new user and logs in
 
-    reg_response = client.post('/auth/register', json=user_data)
+    reg_response = client.post('/users/register', json=user_data)
     assert reg_response.status_code == 201, f'User registration failed: {reg_response.text}'
 
     login_payload = {
         'username': user_data['username'],
         'password': user_data['password'],
     }
-    login_response = client.post('/auth/login', json=login_payload)
+    login_response = client.post('/users/login', json=login_payload)
     assert login_response.status_code == 200, f'Login failed: {login_response.txt}'
     return login_response.json()
 
@@ -60,7 +60,7 @@ def test_user_registration():
         'password': 'SecurePass123!',
         'confirm_password': 'SecurePass123!',
     }
-    response = client.post('/auth/register', json=payload)
+    response = client.post('/users/register', json=payload)
     logger.info(response.text)
     assert response.status_code == 201
     data = response.json()
@@ -87,14 +87,14 @@ def test_user_login():
         'confirm_password': 'SecurePass123!'
     }
 
-    reg_response = client.post('/auth/register', json=test_user)
+    reg_response = client.post('/users/register', json=test_user)
     assert reg_response.status_code == 201
 
     login_payload = {
         'username': test_user['username'],
         'password': test_user['password'],
     }
-    login_response = client.post('/auth/login', json=login_payload)
+    login_response = client.post('/users/login', json=login_payload)
     assert login_response.status_code == 200
 
     login_data = login_response.json()
@@ -351,7 +351,7 @@ def test_fastapi_register_short_password():
         'confirm_password': 'a1A!',
     }
     with patch('app.main.User.register', side_effect=ValueError('fake_error')):
-        response = client.post('/auth/register', json=payload)
+        response = client.post('/users/register', json=payload)
         assert response.status_code == 422
 
 def test_fastapi_login_wrong_password():
@@ -366,14 +366,14 @@ def test_fastapi_login_wrong_password():
         'password': 'SecurePass123!',
         'confirm_password': 'SecurePass123!'
     }
-    reg_response = client.post('/auth/register', json=user_data)
+    reg_response = client.post('/users/register', json=user_data)
     assert reg_response.status_code == 201, f'User registration failed: {reg_response.text}'
 
     login_payload = {
         'username': user_data['username'],
         'password': user_data['password'] + 'xxx',
     }
-    login_response = client.post('/auth/login', json=login_payload)
+    login_response = client.post('/users/login', json=login_payload)
     assert login_response.status_code == 401
 
 def test_login_form():
@@ -388,7 +388,7 @@ def test_login_form():
         'password': 'SecurePass123!',
         'confirm_password': 'SecurePass123!'
     }
-    reg_response = client.post('/auth/register', json=user_data)
+    reg_response = client.post('/users/register', json=user_data)
     assert reg_response.status_code == 201, f'User registration failed: {reg_response.text}'
 
     response = client.post('/auth/token', data={
