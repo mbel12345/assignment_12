@@ -9,7 +9,8 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends gcc python3-dev libssl-dev curl && \
+    apt-get install -y --no-install-recommends gcc python3-dev libssl-dev curl ca-certificates && \
+    update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and essential Python tools
@@ -21,7 +22,7 @@ RUN groupadd -r appgroup && \
 
 # Copy dependencies and install them
 COPY requirements.txt .
-RUN python3 -m pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --no-cache-dir --progress-bar off -r requirements.txt
 
 # Copy application code
 COPY . .
