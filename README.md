@@ -1,6 +1,6 @@
 # Repos
 Github: https://github.com/mbel12345/assignment_12/
-Dockerhub: https://hub.docker.com/r/msb64/assignment_12
+Dockerhub: https://hub.docker.com/r/msb64/assignment_12/
 
 # Project Setup
 
@@ -33,6 +33,7 @@ pip install -r requirements.txt
 Note: This must be already running for all local testing
 In WSL/VS Code Terminal:
 ```bash
+docker compose down -v
 docker compose up --build
 ```
 
