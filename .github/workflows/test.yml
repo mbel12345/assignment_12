@@ -97,8 +97,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/assignment_11:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/assignment_11:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/assignment_12:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/assignment_12:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=registry,ref=mbel12345/assignment_11:cache
           cache-to: type=inline,mode=max
