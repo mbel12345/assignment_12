@@ -56,9 +56,7 @@ jobs:
           DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/mytestdb
         run: |
           source venv/bin/activate
-          pytest tests/unit/ --cov=src --junitxml=test-results/junit.xml
-          pytest tests/integration/
-          pytest tests/e2e/
+          pytest --cov=src --junitxml=test-results/junit.xml
 
   security:
     needs: test
