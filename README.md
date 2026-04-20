@@ -1,6 +1,6 @@
 # Repos
 Github: https://github.com/mbel12345/assignment_12/
-Dockerhub: https://hub.docker.com/r/msb64/assignment_12
+Dockerhub: https://hub.docker.com/r/msb64/assignment_12/
 
 # Project Setup
 
